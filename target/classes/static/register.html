@@ -1,90 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Регистрация</title>
     <meta charset="UTF-8" />
-    <style>
-        /* вставь сюда стили из твоего примера */
-    </style>
+    <link rel="stylesheet" href="/css/registration.css" />
 </head>
+
 <body>
 <div class="registration-form">
     <h2>Регистрация</h2>
-    <div id="error" style="color:red; text-align:center;"></div>
 
-    <form id="registrationForm">
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+
+    <form th:action="@{/registration}" method="post" th:object="${user}">
+
         <label>Имя:</label>
-        <input type="text" id="firstName" required/>
+        <input type="text" th:field="*{firstName}" required/>
 
         <label>Фамилия:</label>
-        <input type="text" id="lastName" required/>
+        <input type="text" th:field="*{lastName}" required/>
 
         <label>Email:</label>
-        <input type="email" id="email" required/>
+        <input type="email" th:field="*{email}" required/>
 
         <label>Пароль:</label>
-        <input type="password" id="password" required/>
+        <input type="password" th:field="*{password}" required/>
 
-        <label>Роли:</label>
-        <select id="roles" multiple>
-            <!-- роли загрузятся скриптом -->
-        </select>
+        <div class="roles">
+            <label>Роли:</label><br/>
+            <label><input type="checkbox" name="roles" value="ROLE_ADMIN" /> ADMIN</label>
+            <label><input type="checkbox" name="roles" value="ROLE_USER" /> USER</label>
+        </div>
+
 
         <button type="submit">Зарегистрироваться</button>
     </form>
 </div>
-
-<script>
-    // Загрузить роли из API
-    fetch('/api/roles')
-        .then(res => res.json())
-        .then(roles => {
-            const rolesSelect = document.getElementById('roles');
-            roles.forEach(role => {
-                const option = document.createElement('option');
-                option.value = role.id;
-                option.text = role.name;
-                rolesSelect.appendChild(option);
-            });
-        });
-
-    // Обработка отправки формы
-    document.getElementById('registrationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        const selectedRoles = Array.from(document.getElementById('roles').selectedOptions)
-            .map(opt => opt.value);
-
-        fetch('/api/users', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                firstName,
-                lastName,
-                email,
-                password,
-                roleIds: selectedRoles
-            })
-        })
-            .then(res => {
-                if (res.ok) {
-                    alert('Регистрация успешна!');
-                    window.location.href = '/login.html';  // или куда нужно после регистрации
-                } else {
-                    return res.json().then(data => {
-                        document.getElementById('error').textContent = data.message || 'Ошибка регистрации';
-                    });
-                }
-            })
-            .catch(() => {
-                document.getElementById('error').textContent = 'Ошибка соединения с сервером';
-            });
-    });
-</script>
 </body>
 </html>

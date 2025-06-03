@@ -30,6 +30,7 @@ public class WebSecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers("/css/**").permitAll()
+                .antMatchers("/register.html", "/api/users/register").permitAll()
                 .antMatchers("/index.html", "/admin.js").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()

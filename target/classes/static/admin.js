@@ -269,3 +269,30 @@ function showPanel(panelId) {
 
 window.showPanel = showPanel; // Делаем функцию доступной глобально
 
+document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const email = this.email.value;
+    const password = this.password.value;
+
+    try {
+        const response = await fetch('/api/users/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('[name="_csrf"]')?.value || ''
+            },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+            alert("Регистрация успешна!");
+            window.location.href = '/login.html';
+        } else {
+            const err = await response.text();
+            alert("Ошибка: " + err);
+        }
+    } catch (err) {
+        console.error('Ошибка при регистрации:', err);
+        alert("Ошибка при подключении к серверу");
+    }
+});
