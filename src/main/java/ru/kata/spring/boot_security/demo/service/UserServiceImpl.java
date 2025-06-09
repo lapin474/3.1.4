@@ -36,12 +36,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userDao.saveUser(user);
-    }
-
-    @Override
     public void saveUserWithRoles(User user, List<String> roleNames) {
         user.setRoles(resolveRoles(roleNames));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -51,19 +45,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         userDao.deleteUser(id);
-    }
-
-    @Override
-    public void updateUser(User user) {
-        User existingUser = userDao.showUser(user.getId());
-
-        if (!user.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        } else {
-            user.setPassword(existingUser.getPassword());
-        }
-
-        userDao.updateUser(user);
     }
 
     @Override
